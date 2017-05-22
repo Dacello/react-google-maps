@@ -7,4 +7,4 @@
 #### Run Locally
 1. `npm install`
 2. `npm run dev`
-3. Open up `src/client/app/index.html` in your browser and you should see the map
+3. Open up `app/index.html` in your browser and you should see the map
