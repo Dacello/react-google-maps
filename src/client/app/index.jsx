@@ -1,5 +1,3 @@
-import css from './stylesheets/base.css';
-
 import React from 'react';
 import {render} from 'react-dom';
 
