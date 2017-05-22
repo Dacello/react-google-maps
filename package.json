@@ -1,0 +1,32 @@
+{
+  "name": "react-gmaps",
+  "version": "1.0.0",
+  "description": "A react component for a google map!",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node_modules/.bin/webpack -d --watch",
+    "build": "node_modules/.bin/webpack -p",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "react-gmap"
+  },
+  "keywords": [
+    "react",
+    "google",
+    "maps"
+  ],
+  "author": "Daniel Andrews",
+  "license": "ISC",
+  "dependencies": {
+    "babel-loader": "^7.0.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
+  "devDependencies": {
+    "css-loader": "^0.28.2"
+  }
+}
