@@ -55,7 +55,9 @@ export default class GMap extends React.Component {
   createMarker() {
     return new google.maps.Marker({
       position: this.mapCenter(),
-      map: this.map
+      map: this.map,
+      // set this to false to create a static marker
+      draggable:true
     })
 	}
 
