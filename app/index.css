@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+html, body, .GMap {
+  font-family: 'Roboto', sans-serif;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+
+.GMap-canvas {
+  top: 20px;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
