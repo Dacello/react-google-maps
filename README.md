@@ -5,6 +5,8 @@
 
 
 #### Run Locally
-1. `npm install`
-2. `npm run dev`
-3. Open up `app/index.html` in your browser and you should see the map
+
+1. `npm install` to install dependencies.
+2. `npm run dev` to start the development server.
+3. Open up `localhost:8080` in your browser and you should see the map!
+4. Make some changes to a file and hit save. The page will reload with your new code.
