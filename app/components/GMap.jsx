@@ -1,9 +1,9 @@
 import React from 'react';
 
 export default class GMap extends React.Component {
-  static propTypes() {
-    initialCenter: React.PropTypes.objectOf(React.PropTypes.number).isRequired
-  }
+  // static propTypes() {
+  //   initialCenter: React.PropTypes.objectOf(React.PropTypes.number).isRequired
+  // }
 
   constructor(props){
     super(props);
@@ -21,15 +21,27 @@ export default class GMap extends React.Component {
   }
 
   componentDidMount() {
+    let center = {
+      lat: 0,
+      lng: 0
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition( (position) => {
+        center = this.mapCenter(position.coords.latitude, position.coords.longitude);
+        this.map.panTo(center);
+        this.marker.setPosition(center);
+      })
+    }
     // create the map, marker and infoWindow after the component has
     // been rendered because we need to manipulate the DOM for Google =(
-    this.map = this.createMap()
-    this.marker = this.createMarker()
-    this.infoWindow = this.createInfoWindow()
+    this.map = this.createMap(center);
+    this.marker = this.createMarker(center);
+    this.infoWindow = this.createInfoWindow();
 
     // have to define google maps event listeners here too
     // because we can't add listeners on the map until its created
-    google.maps.event.addListener(this.map, 'zoom_changed', ()=> this.handleZoomChange())
+    google.maps.event.addListener(this.map, 'zoom_changed', ()=> this.handleZoomChange());
   }
 
   // clean up event listeners when component unmounts
@@ -37,24 +49,21 @@ export default class GMap extends React.Component {
     google.maps.event.clearListeners(map, 'zoom_changed')
   }
 
-  createMap() {
+  createMap(center) {
     let mapOptions = {
       zoom: this.state.zoom,
-      center: this.mapCenter()
+      center: this.mapCenter(center.lat, center.lng)
     }
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
   }
 
-  mapCenter() {
-    return new google.maps.LatLng(
-      this.props.initialCenter.lat,
-      this.props.initialCenter.lng
-    )
+  mapCenter(lat, lng) {
+    return new google.maps.LatLng(lat,lng)
   }
 
-  createMarker() {
+  createMarker(location) {
     return new google.maps.Marker({
-      position: this.mapCenter(),
+      position: this.mapCenter(location.lat, location.lng),
       map: this.map,
       // set this to false to create a static marker
       draggable:true
