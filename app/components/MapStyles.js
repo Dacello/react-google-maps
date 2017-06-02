@@ -1,13 +1,4 @@
-export default function MapStyles() {
-  // set color values here!
-  let colors = {
-    base: "#212121",
-    baseContour1: "#4d4d4d",
-    baseContour2: "#797979",
-    baseContour3: "#a6a6a6",
-    accent: "#fcbd40",
-    accentLight: "#fcb24b"
-  };
+export default function MapStyles(colors) {
 
   return [
     {

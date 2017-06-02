@@ -1,6 +1,4 @@
-export default function Marker(position, map) {
-  let image = './app/RevMarker.png'
-
+export default function Marker(position, map, image) {
   return new google.maps.Marker({
     position: position,
     map: map,

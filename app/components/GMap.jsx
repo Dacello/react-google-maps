@@ -8,6 +8,7 @@ export default class GMap extends React.Component {
     center: React.PropTypes.objectOf(React.PropTypes.number).isRequired;
     message: React.PropTypes.string.isRequired;
     findUserLocation: React.PropTypes.string;
+    markerImage: React.PropTypes.string;
   }
 
   constructor(props){
@@ -32,7 +33,7 @@ export default class GMap extends React.Component {
     // create the map, marker and infoWindow after the component has
     // been rendered because we need to manipulate the DOM for Google =(
     this.map = this.createMap(this.state.center);
-    this.marker = Marker(this.state.center, this.map);
+    this.marker = Marker(this.state.center, this.map, this.props.markerImage);
     this.infoWindow = InfoWindow(this.map, this.marker, this.props.message);
 
     // have to define google maps event listeners here too
@@ -49,7 +50,7 @@ export default class GMap extends React.Component {
     let mapOptions = {
       zoom: this.state.zoom,
       center: center,
-      styles: MapStyles()
+      styles: MapStyles(this.props.colors)
     }
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
   }
