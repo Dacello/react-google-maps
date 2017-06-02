@@ -15,7 +15,8 @@ export default class GMap extends React.Component {
     super(props);
     this.state = {
       zoom: 12,
-      center: this.mapCenter(props.center.lat, props.center.lng)
+      center: this.mapCenter(props.center.lat, props.center.lng),
+      infoWindowIsOpen: true
     };
   }
 
@@ -38,7 +39,8 @@ export default class GMap extends React.Component {
 
     // have to define google maps event listeners here too
     // because we can't add listeners on the map until its created
-    google.maps.event.addListener(this.map, 'zoom_changed', ()=> this.handleZoomChange());
+    google.maps.event.addListener(this.map, 'zoom_changed', () => this.handleZoomChange());
+    google.maps.event.addListener(this.marker, 'click', () => this.toggleInfoWindow())
   }
 
   // clean up event listeners when component unmounts
@@ -62,6 +64,20 @@ export default class GMap extends React.Component {
     this.setState({
       zoom: this.map.getZoom()
     })
+  }
+
+  toggleInfoWindow() {
+    if (this.state.infoWindowIsOpen) {
+      this.infoWindow.close()
+      this.setState({
+        infoWindowIsOpen: false
+      })
+    } else {
+      this.infoWindow = InfoWindow(this.map, this.marker, this.props.message);
+      this.setState({
+        infoWindowIsOpen: true
+      })
+    }
   }
 
   mapCenter(lat, lng) {
