@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function Marker(position, map) {
 
   return new google.maps.Marker({
