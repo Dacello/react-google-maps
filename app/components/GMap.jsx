@@ -1,21 +1,25 @@
 import React from 'react';
+import MapStyles from './MapStyles'
 
 export default class GMap extends React.Component {
-  // static propTypes() {
-  //   initialCenter: React.PropTypes.objectOf(React.PropTypes.number).isRequired
-  // }
+  static propTypes() {
+    center: React.PropTypes.objectOf(React.PropTypes.number).isRequired;
+    message: React.PropTypes.string.isRequired;
+  }
 
   constructor(props){
     super(props);
     this.state = {
-      zoom: 10,
+      zoom: 12,
       center: this.mapCenter(props.center.lat, props.center.lng)
     };
   }
 
+
+
   render() {
     return <div className="GMap">
-      <div className='UpdatedText'>
+      <div className='UpdatedText' id="zoom">
         <p>Current Zoom: { this.state.zoom }</p>
       </div>
       <div className='GMap-canvas' ref="mapCanvas">
@@ -30,11 +34,9 @@ export default class GMap extends React.Component {
       navigator.geolocation.getCurrentPosition( (position) => {
         this.setState({
           center: this.mapCenter(position.coords.latitude, position.coords.longitude)
-        })
-        this.map.panTo(this.state.center);
-        this.marker.setPosition(this.state.center);
-        this.infoWindow.setContent("Got it!")
-      })
+        });
+        this.moveMap("Got it!");
+      }, () => this.infoWindow.setContent("Couldn't find your location :("))
     }
     // create the map, marker and infoWindow after the component has
     // been rendered because we need to manipulate the DOM for Google =(
@@ -52,10 +54,17 @@ export default class GMap extends React.Component {
     google.maps.event.clearListeners(map, 'zoom_changed')
   }
 
+  moveMap(message) {
+    this.map.panTo(this.state.center);
+    this.marker.setPosition(this.state.center);
+    this.infoWindow.setContent(message)
+  }
+
   createMap(center) {
     let mapOptions = {
       zoom: this.state.zoom,
-      center: center
+      center: center,
+      styles: MapStyles()
     }
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
   }
