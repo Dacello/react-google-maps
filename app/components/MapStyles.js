@@ -1,11 +1,12 @@
 export default function MapStyles() {
+  // set color values here!
   let colors = {
     base: "#212121",
-    baseContour1: "#373737",
-    baseContour2: "#4d4d4d",
-    baseContour3: "#636363",
+    baseContour1: "#4d4d4d",
+    baseContour2: "#797979",
+    baseContour3: "#a6a6a6",
     accent: "#fcbd40",
-    accentLight: "#fcbd64"
+    accentLight: "#fcb24b"
   };
 
   return [
@@ -189,7 +190,7 @@ export default function MapStyles() {
       "elementType": "geometry.fill",
       "stylers": [
         {
-          "color": colors.baseContour2
+          "color": colors.baseContour1
         }
       ]
     },
@@ -198,7 +199,7 @@ export default function MapStyles() {
       "elementType": "geometry",
       "stylers": [
         {
-          "color": colors.baseContour3
+          "color": colors.baseContour2
         }
       ]
     },
@@ -242,7 +243,7 @@ export default function MapStyles() {
       "elementType": "geometry.fill",
       "stylers": [
         {
-          "color": colors.baseContour3
+          "color": colors.baseContour2
         }
       ]
     },

@@ -7,6 +7,7 @@ export default class GMap extends React.Component {
   static propTypes() {
     center: React.PropTypes.objectOf(React.PropTypes.number).isRequired;
     message: React.PropTypes.string.isRequired;
+    findUserLocation: React.PropTypes.string;
   }
 
   constructor(props){
@@ -20,7 +21,7 @@ export default class GMap extends React.Component {
   componentDidMount() {
 
     // lets map autocenter on user's location (if the user enables it)
-    if (navigator.geolocation) {
+    if (this.props.findUserLocation && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition( (position) => {
         this.setState({
           center: this.mapCenter(position.coords.latitude, position.coords.longitude)
@@ -32,7 +33,7 @@ export default class GMap extends React.Component {
     // been rendered because we need to manipulate the DOM for Google =(
     this.map = this.createMap(this.state.center);
     this.marker = Marker(this.state.center, this.map);
-    this.infoWindow = InfoWindow(this.map, this.marker, "Searching for your location!");
+    this.infoWindow = InfoWindow(this.map, this.marker, this.props.message);
 
     // have to define google maps event listeners here too
     // because we can't add listeners on the map until its created

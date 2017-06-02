@@ -6,19 +6,19 @@ import GMap from './components/GMap.jsx';
 class App extends React.Component {
   get initialCenter() {
     return {
-      lat: 0,
-      lng: 0
+      lat: 29.975588,
+      lng: -90.102682
     }
   }
 
   get initialMessage() {
-    return "Searching for your location!"
+    return "Revelry Labs!"
   }
 
   render () {
     return <div>
       <h1>React with Google Maps</h1>
-      <GMap center={this.initialCenter} message={this.initialMessage}/>
+      <GMap center={this.initialCenter} message={this.initialMessage} findUserLocation={false}/>
     </div>;
   }
 }
