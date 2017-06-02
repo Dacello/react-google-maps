@@ -1,11 +1,10 @@
 import React from 'react';
 import MapStyles from './MapStyles';
-import Marker from './Marker';
-import InfoWindow from './InfoWindow';
 
 export default class GMap extends React.Component {
   static propTypes() {
     center: React.PropTypes.objectOf(React.PropTypes.number).isRequired;
+    colors: React.PropTypes.objectOf(React.PropTypes.string);
     message: React.PropTypes.string.isRequired;
     findUserLocation: React.PropTypes.string;
     markerImage: React.PropTypes.string;
@@ -34,8 +33,8 @@ export default class GMap extends React.Component {
     // create the map, marker and infoWindow after the component has
     // been rendered because we need to manipulate the DOM for Google =(
     this.map = this.createMap(this.state.center);
-    this.marker = Marker(this.state.center, this.map, this.props.markerImage);
-    this.infoWindow = InfoWindow(this.map, this.marker, this.props.message);
+    this.marker = this.newMarker(this.state.center, this.map, this.props.markerImage);
+    this.infoWindow = this.newInfoWindow(this.map, this.marker, this.props.message);
 
     // have to define google maps event listeners here too
     // because we can't add listeners on the map until its created
@@ -66,6 +65,24 @@ export default class GMap extends React.Component {
     })
   }
 
+  newInfoWindow(map, anchor, content) {
+    return new google.maps.InfoWindow({
+      map: map,
+      anchor: anchor,
+      content: content
+    })
+  }
+
+  newMarker(position, map, image) {
+    return new google.maps.Marker({
+      position: position,
+      map: map,
+      draggable: true,
+      animation: google.maps.Animation.DROP,
+      icon: image
+    })
+  }
+
   toggleInfoWindow() {
     if (this.state.infoWindowIsOpen) {
       this.infoWindow.close()
@@ -73,7 +90,7 @@ export default class GMap extends React.Component {
         infoWindowIsOpen: false
       })
     } else {
-      this.infoWindow = InfoWindow(this.map, this.marker, this.props.message);
+      this.infoWindow = this.newInfoWindow(this.map, this.marker, this.props.message);
       this.setState({
         infoWindowIsOpen: true
       })
