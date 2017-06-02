@@ -1,5 +1,7 @@
 import React from 'react';
-import MapStyles from './MapStyles'
+import MapStyles from './MapStyles';
+import Marker from './Marker';
+import InfoWindow from './InfoWindow';
 
 export default class GMap extends React.Component {
   static propTypes() {
@@ -13,18 +15,6 @@ export default class GMap extends React.Component {
       zoom: 12,
       center: this.mapCenter(props.center.lat, props.center.lng)
     };
-  }
-
-
-
-  render() {
-    return <div className="GMap">
-      <div className='UpdatedText' id="zoom">
-        <p>Current Zoom: { this.state.zoom }</p>
-      </div>
-      <div className='GMap-canvas' ref="mapCanvas">
-      </div>
-    </div>
   }
 
   componentDidMount() {
@@ -41,8 +31,8 @@ export default class GMap extends React.Component {
     // create the map, marker and infoWindow after the component has
     // been rendered because we need to manipulate the DOM for Google =(
     this.map = this.createMap(this.state.center);
-    this.marker = this.createMarker(this.state.center);
-    this.infoWindow = this.createInfoWindow(this.props.message);
+    this.marker = Marker(this.state.center, this.map);
+    this.infoWindow = InfoWindow(this.map, this.marker, "Searching for your location!");
 
     // have to define google maps event listeners here too
     // because we can't add listeners on the map until its created
@@ -54,12 +44,6 @@ export default class GMap extends React.Component {
     google.maps.event.clearListeners(map, 'zoom_changed')
   }
 
-  moveMap(message) {
-    this.map.panTo(this.state.center);
-    this.marker.setPosition(this.state.center);
-    this.infoWindow.setContent(message)
-  }
-
   createMap(center) {
     let mapOptions = {
       zoom: this.state.zoom,
@@ -69,30 +53,29 @@ export default class GMap extends React.Component {
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
   }
 
-  mapCenter(lat, lng) {
-    return new google.maps.LatLng(lat,lng)
-  }
-
-  createMarker(location) {
-    return new google.maps.Marker({
-      position: location,
-      map: this.map,
-      // set this to false to create a static marker
-      draggable:true
-    })
-	}
-
-  createInfoWindow(message) {
-    return new google.maps.InfoWindow({
-      map: this.map,
-      anchor: this.marker,
-      content: `<div class='InfoWindow'>${message}</div>`
-    })
-  }
-
   handleZoomChange() {
     this.setState({
       zoom: this.map.getZoom()
     })
+  }
+
+  mapCenter(lat, lng) {
+    return new google.maps.LatLng(lat,lng)
+  }
+
+  moveMap(message) {
+    this.map.panTo(this.state.center);
+    this.marker.setPosition(this.state.center);
+    this.infoWindow.setContent(message)
+  }
+
+  render() {
+    return <div className="GMap">
+      <div className='UpdatedText' id="zoom">
+        <p>Current Zoom: { this.state.zoom }</p>
+      </div>
+      <div className='GMap-canvas' ref="mapCanvas">
+      </div>
+    </div>
   }
 }
