@@ -6,6 +6,8 @@ import GMap from './components/GMap.jsx';
 class App extends React.Component {
   get mapSettings() {
     return {
+      // if you prefer the regular Google Maps colors,
+      // remove this option completely
       colors: {
         base: "#212121",
         baseContour1: "#4d4d4d",
@@ -19,6 +21,7 @@ class App extends React.Component {
         lng: -90.102682
       },
       initialMessage: "Revelry Labs!",
+      // set a custom image to use as a pointer
       markerImage: './app/RevMarker.png',
       snapToUserLocation: false,
     }

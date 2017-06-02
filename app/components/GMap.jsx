@@ -50,7 +50,10 @@ export default class GMap extends React.Component {
     let mapOptions = {
       zoom: this.state.zoom,
       center: center,
-      styles: MapStyles(this.props.colors)
+      mapTypeId: 'terrain'
+    }
+    if (this.props.colors) {
+      mapOptions.styles = MapStyles(this.props.colors)
     }
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
   }
