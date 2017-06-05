@@ -1,6 +1,5 @@
 import React from 'react';
 import {render} from 'react-dom';
-
 import GMap from './components/GMap.jsx';
 
 class App extends React.Component {
@@ -20,7 +19,12 @@ class App extends React.Component {
         lat: 29.975588,
         lng: -90.102682
       },
-      initialMessage: "Revelry Labs!",
+      initialMessage: [
+        "<div class='InfoWindow'>",
+        "<h3>Revelry Labs</h3>",
+        "<p>4200 Canal St, Suite E</p>",
+        "<p>New Orleans, LA 70119</p>",
+        "</div>"].join(""),
       // set a custom image to use as a pointer
       markerImage: './app/RevMarker.png',
       snapToUserLocation: false,
@@ -30,6 +34,7 @@ class App extends React.Component {
   render () {
     return <div>
       <h1>React with Google Maps</h1>
+
       <GMap
         center={this.mapSettings.initialCenter}
         colors={this.mapSettings.colors}

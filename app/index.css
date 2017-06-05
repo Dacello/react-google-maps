@@ -11,6 +11,10 @@ h1, #zoom {
   text-align: center;
 }
 
+.InfoWindow {
+  font-family: 'Roboto', sans-serif;
+}
+
 .GMap-canvas {
   top: 20px;
   display: block;
