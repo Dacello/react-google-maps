@@ -4,7 +4,7 @@
   "description": "A react component for a google map!",
   "main": "index.js",
   "scripts": {
-    "dev": "node_modules/.bin/webpack -d --watch",
+    "dev": "node_modules/.bin/webpack-dev-server --output-public-path=/public/",
     "build": "node_modules/.bin/webpack -p",
     "test": "test"
   },
@@ -26,6 +26,11 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react-dom": "^15.5.4",
+    "react-load-script": "0.0.4"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^2.4.5",
+    "webpack-dotenv-plugin": "^2.0.0"
   }
 }
