@@ -3,12 +3,23 @@ import MapStyles from './MapStyles';
 import Script from 'react-load-script';
 
 export default class GMap extends React.Component {
-  static propTypes() {
-    center: React.PropTypes.objectOf(React.PropTypes.number).isRequired;
-    colors: React.PropTypes.objectOf(React.PropTypes.string);
-    message: React.PropTypes.string.isRequired;
-    findUserLocation: React.PropTypes.string;
-    markerImage: React.PropTypes.string;
+  static get propTypes() {
+    return {
+      center: React.PropTypes.objectOf(React.PropTypes.number).isRequired,
+      colors: React.PropTypes.objectOf(React.PropTypes.string),
+      message: React.PropTypes.string.isRequired,
+      findUserLocation: React.PropTypes.bool,
+      markerImage: React.PropTypes.string,
+    }
+  }
+
+  static get defaultProps() {
+    return {
+        center: {
+          lat: 29.975588,
+          lng: -90.102682 },
+        message: "A Message"
+    }
   }
 
   constructor(props){
