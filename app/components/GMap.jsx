@@ -8,8 +8,9 @@ export default class GMap extends React.Component {
     return {
       config: PropTypes.shape({
         colors: PropTypes.objectOf(PropTypes.string),
-        initialCenter: PropTypes.objectOf(PropTypes.number),
         icons: PropTypes.objectOf(PropTypes.string),
+        initialCenter: PropTypes.objectOf(PropTypes.number),
+        initialZoom: PropTypes.number,
         markers: PropTypes.arrayOf(PropTypes.object),
         snapToUserLocation: PropTypes.bool
       })
@@ -28,7 +29,6 @@ export default class GMap extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      zoom: 11,
       infoWindowIsOpen: true
     };
   }
@@ -48,12 +48,10 @@ export default class GMap extends React.Component {
       this.props.config.markers.forEach( (marker) => {
         let thisMarker = this.newMarker(marker.position, this.props.config.icons[marker.icon]);
         let thisInfoWindow = this.newInfoWindow(thisMarker, marker.message);
+        // have to define google maps event listeners here too
+        // because we can't add listeners on the map until its created
         google.maps.event.addListener(thisMarker, 'click', () => this.toggleInfoWindow())
       })
-
-      // have to define google maps event listeners here too
-      // because we can't add listeners on the map until its created
-      google.maps.event.addListener(this.map, 'zoom_changed', () => this.handleZoomChange());
     }
   }
 
@@ -64,7 +62,7 @@ export default class GMap extends React.Component {
 
   createMap(center) {
     let mapOptions = {
-      zoom: this.state.zoom,
+      zoom: this.props.config.initialZoom,
       center: center,
       mapTypeId: 'terrain'
     }
@@ -102,12 +100,6 @@ export default class GMap extends React.Component {
       scriptLoaded: true
     });
     this.loadMap();
-  }
-
-  handleZoomChange() {
-    this.setState({
-      zoom: this.map.getZoom()
-    })
   }
 
   newInfoWindow(anchor, content) {
@@ -161,9 +153,6 @@ export default class GMap extends React.Component {
         onError={this.handleScriptError.bind(this)}
         onLoad={this.handleScriptLoad.bind(this)}
       />
-      <div className='UpdatedText' id="zoom">
-        <p>Current Zoom: { this.state.zoom }</p>
-      </div>
       <div className='GMap-canvas' ref="mapCanvas">
       </div>
     </div>

@@ -22,6 +22,7 @@ class App extends React.Component {
         lat: 29.975588,
         lng: -90.102682
       },
+      initialZoom: 9,
       markers: [
         {
           position: {
