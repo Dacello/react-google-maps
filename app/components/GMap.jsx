@@ -1,15 +1,18 @@
 import React from 'react';
 import MapStyles from './MapStyles';
 import Script from 'react-load-script';
+import PropTypes from 'prop-types';
 
 export default class GMap extends React.Component {
   static get propTypes() {
     return {
-      center: React.PropTypes.objectOf(React.PropTypes.number).isRequired,
-      colors: React.PropTypes.objectOf(React.PropTypes.string),
-      message: React.PropTypes.string.isRequired,
-      findUserLocation: React.PropTypes.bool,
-      markerImage: React.PropTypes.string,
+      config: PropTypes.shape({
+        colors: PropTypes.objectOf(PropTypes.string),
+        initialCenter: PropTypes.objectOf(PropTypes.number),
+        initialMessage: PropTypes.string,
+        markerImage: PropTypes.string,
+        snapToUserLocation: PropTypes.bool
+      })
     }
   }
 
@@ -18,7 +21,7 @@ export default class GMap extends React.Component {
         center: {
           lat: 29.975588,
           lng: -90.102682 },
-        message: "A Message"
+        message: "Default Message"
     }
   }
 
@@ -34,7 +37,7 @@ export default class GMap extends React.Component {
     if (this.state.scriptLoaded) {
       // lets map autocenter on user's location (if the user enables it)
       // which takes a while, so the map is created and goes to the initial center first
-      if (this.props.findUserLocation && navigator.geolocation) {
+      if (this.props.config.snapToUserLocation && navigator.geolocation) {
         navigator.geolocation.getCurrentPosition( (position) => {
           this.setState({
             center: this.mapCenter(position.coords.latitude, position.coords.longitude)
@@ -43,14 +46,14 @@ export default class GMap extends React.Component {
         }, () => this.infoWindow.setContent("Couldn't find your location :("))
       } else {
         this.setState({
-          center: this.mapCenter(this.props.center.lat, this.props.center.lng)
+          center: this.mapCenter(this.props.config.initialCenter.lat, this.props.config.initialCenter.lng)
         })
       }
       // create the map, marker and infoWindow after the component has
       // been rendered because we need to manipulate the DOM for Google =(
-      this.map = this.createMap(this.state.center);
-      this.marker = this.newMarker(this.state.center, this.map, this.props.markerImage);
-      this.infoWindow = this.newInfoWindow(this.map, this.marker, this.props.message);
+      this.map = this.createMap(this.props.config.initialCenter);
+      this.marker = this.newMarker(this.props.config.initialCenter, this.map, this.props.config.markerImage);
+      this.infoWindow = this.newInfoWindow(this.map, this.marker, this.props.config.initialMessage);
 
       // have to define google maps event listeners here too
       // because we can't add listeners on the map until its created
@@ -70,8 +73,8 @@ export default class GMap extends React.Component {
       center: center,
       mapTypeId: 'terrain'
     }
-    if (this.props.colors) {
-      mapOptions.styles = MapStyles(this.props.colors)
+    if (this.props.config.colors) {
+      mapOptions.styles = MapStyles(this.props.config.colors)
     }
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
   }
@@ -126,7 +129,7 @@ export default class GMap extends React.Component {
         infoWindowIsOpen: false
       })
     } else {
-      this.infoWindow = this.newInfoWindow(this.map, this.marker, this.props.message);
+      this.infoWindow = this.newInfoWindow(this.map, this.marker, this.props.config.initialMessage);
       this.setState({
         infoWindowIsOpen: true
       })

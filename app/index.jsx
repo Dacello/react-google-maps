@@ -35,13 +35,13 @@ class App extends React.Component {
     return <div>
       <h1>React with Google Maps</h1>
 
-      <GMap
-        center={this.mapSettings.initialCenter}
-        colors={this.mapSettings.colors}
-        findUserLocation={this.mapSettings.snapToUserLocation}
-        markerImage={this.mapSettings.markerImage}
-        message={this.mapSettings.initialMessage} />
-    </div>;
+      <GMap config={this.mapSettings}/>
+        { /* // center={this.mapSettings.initialCenter}
+          // colors={this.mapSettings.colors}
+          // findUserLocation={this.mapSettings.snapToUserLocation}
+          // markerImage={this.mapSettings.markerImage}
+        // message={this.mapSettings.initialMessage} /> */}
+        </div>;
   }
 }
 
