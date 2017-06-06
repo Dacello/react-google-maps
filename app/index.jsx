@@ -15,18 +15,28 @@ class App extends React.Component {
         accent: "#fcbd40",
         accentLight: "#fcb24b"
       },
+      icons: {
+        revelry: './app/RevMarker.png',
+      },
       initialCenter: {
         lat: 29.975588,
         lng: -90.102682
       },
-      initialMessage: [
-        "<div class='InfoWindow'>",
-        "<h3>Revelry Labs</h3>",
-        "<p>4200 Canal St, Suite E</p>",
-        "<p>New Orleans, LA 70119</p>",
-        "</div>"].join(""),
-      // set a custom image to use as a pointer
-      markerImage: './app/RevMarker.png',
+      markers: [
+        {
+          position: {
+            lat: 29.975588,
+            lng: -90.102682
+          },
+          icon: 'revelry',
+          message: [
+            "<div class='InfoWindow'>",
+            "<h3>Revelry Labs</h3>",
+            "<p>4200 Canal St, Suite E</p>",
+            "<p>New Orleans, LA 70119</p>",
+            "</div>"].join(""),
+        }
+      ],
       snapToUserLocation: false,
     }
   }
@@ -34,13 +44,7 @@ class App extends React.Component {
   render () {
     return <div>
       <h1>React with Google Maps</h1>
-
       <GMap config={this.mapSettings}/>
-        { /* // center={this.mapSettings.initialCenter}
-          // colors={this.mapSettings.colors}
-          // findUserLocation={this.mapSettings.snapToUserLocation}
-          // markerImage={this.mapSettings.markerImage}
-        // message={this.mapSettings.initialMessage} /> */}
         </div>;
   }
 }
