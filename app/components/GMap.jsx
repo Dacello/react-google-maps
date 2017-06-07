@@ -19,23 +19,26 @@ export default class GMap extends React.Component {
 
   static get defaultProps() {
     return {
-        center: {
+      config: {
+        initialCenter: {
           lat: 29.975588,
-          lng: -90.102682 },
-        message: "Default Message"
+          lng: -90.102682
+        },
+        initialZoom: 10
+      }
     }
   }
 
   constructor(props){
     super(props);
     this.state = {
-      // infoWindowIsOpen: true
+      center: null
     };
   }
 
   loadMap() {
     if (this.state.scriptLoaded) {
-      if (this.props.config.snapToUserLocation && navigator.geolocation) {
+      if (this.props.config && this.props.config.snapToUserLocation && navigator.geolocation) {
         this.getUserLocation()
       } else {
         this.setState({
@@ -45,7 +48,9 @@ export default class GMap extends React.Component {
       // create the map and markers after the component has
       // been rendered because we need to manipulate the DOM for Google =(
       this.map = this.createMap(this.props.config.initialCenter);
-      this.markers = this.createMarkers(this.props.config.markers)
+      if (this.props.config && this.props.config.markers) {
+        this.markers = this.createMarkers(this.props.config.markers);
+      }
     }
   }
 
@@ -60,7 +65,7 @@ export default class GMap extends React.Component {
       center: center,
       mapTypeId: 'terrain'
     }
-    if (this.props.config.colors) {
+    if (this.props.config && this.props.config.colors) {
       mapOptions.styles = MapStyles(this.props.config.colors)
     }
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
