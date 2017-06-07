@@ -29,7 +29,7 @@ export default class GMap extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      infoWindowIsOpen: true
+      // infoWindowIsOpen: true
     };
   }
 
@@ -42,16 +42,10 @@ export default class GMap extends React.Component {
           center: this.mapCenter(this.props.config.initialCenter.lat, this.props.config.initialCenter.lng)
         })
       }
-      // create the map, marker and infoWindow after the component has
+      // create the map and markers after the component has
       // been rendered because we need to manipulate the DOM for Google =(
       this.map = this.createMap(this.props.config.initialCenter);
-      this.props.config.markers.forEach( (marker) => {
-        let thisMarker = this.newMarker(marker.position, this.props.config.icons[marker.icon]);
-        let thisInfoWindow = this.newInfoWindow(thisMarker, marker.message);
-        // have to define google maps event listeners here too
-        // because we can't add listeners on the map until its created
-        google.maps.event.addListener(thisMarker, 'click', () => this.toggleInfoWindow())
-      })
+      this.markers = this.createMarkers(this.props.config.markers)
     }
   }
 
@@ -70,6 +64,15 @@ export default class GMap extends React.Component {
       mapOptions.styles = MapStyles(this.props.config.colors)
     }
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
+  }
+
+  createMarkers(markers) {
+    markers.forEach( (marker) => {
+      let thisMarker = this.newMarker(marker.position, this.props.config.icons[marker.icon]);
+      // have to define google maps event listeners here too
+      // because we can't add listeners on the map until it's created
+      google.maps.event.addListener(thisMarker, 'click', () => this.newInfoWindow(thisMarker, marker.message));
+    })
   }
 
   getUserLocation() {
@@ -118,20 +121,6 @@ export default class GMap extends React.Component {
       animation: google.maps.Animation.DROP,
       icon: image
     })
-  }
-
-  toggleInfoWindow() {
-    if (this.state.infoWindowIsOpen) {
-      this.infoWindow.close()
-      this.setState({
-        infoWindowIsOpen: false
-      })
-    } else {
-      this.infoWindow = this.newInfoWindow(this.map, this.marker, this.props.config.initialMessage);
-      this.setState({
-        infoWindowIsOpen: true
-      })
-    }
   }
 
   mapCenter(lat, lng) {

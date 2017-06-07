@@ -22,7 +22,7 @@ class App extends React.Component {
         lat: 29.975588,
         lng: -90.102682
       },
-      initialZoom: 9,
+      initialZoom: 11,
       markers: [
         {
           position: {
@@ -31,11 +31,25 @@ class App extends React.Component {
           },
           icon: 'revelry',
           message: [
-            "<div class='InfoWindow'>",
             "<h3>Revelry Labs</h3>",
             "<p>4200 Canal St, Suite E</p>",
-            "<p>New Orleans, LA 70119</p>",
-            "</div>"].join(""),
+            "<p>New Orleans, LA 70119</p>"].join(""),
+        },
+        {
+          position: {
+            lat: 29.995594,
+            lng: -90.102682
+          },
+          icon: 'revelry',
+          message: "A second marker",
+        },
+        {
+          position: {
+            lat: 29.955594,
+            lng: -90.102682
+          },
+          icon: 'revelry',
+          message: "A third marker",
         }
       ],
       snapToUserLocation: false,
