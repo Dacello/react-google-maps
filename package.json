@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node_modules/.bin/webpack-dev-server --output-public-path=/public/",
     "build": "node_modules/.bin/webpack -p",
-    "test": "mocha app/components/Gmap.test.js --opts ./mocha.opts"
+    "test": "mocha test/Gmap.test.js --opts test/mocha.opts"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
     "babel-register": "^6.24.1",
     "chai": "^4.0.2",
     "enzyme": "^2.8.2",
+    "jsdom": "^11.0.0",
     "mocha": "^3.4.2",
     "react-test-renderer": "^15.5.4",
     "webpack-dev-server": "^2.4.5",
