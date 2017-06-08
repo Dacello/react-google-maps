@@ -29,36 +29,42 @@ To customize the map, pass it a `config` object as a prop. Example usage:
 ```
 
 let settings = {
-  initialCenter: {
-    lat: 29.975588,
-    lng: -90.102682
-  },
-  initialZoom: 11,
-  icons: {
-    revelry: './app/RevMarker.png',
-  },
-  markers: [
-    {
-      position: {
-        lat: 29.975588,
-        lng: -90.102682
-      },
-      icon: 'revelry',
-      message: [
-        "<h3>Revelry Labs</h3>",
-        "<p>4200 Canal St, Suite E</p>",
-        "<p>New Orleans, LA 70119</p>"].join(""),
+  {
+    colors: {
+      base: "#212121",
+      baseContour1: "#4d4d4d",
+      baseContour2: "#797979",
+      baseContour3: "#a6a6a6",
+      accent: "#fcbd40",
+      accentLight: "#fcb24b"
     },
-  ],
-  colors: {
-    base: "#212121",
-    baseContour1: "#4d4d4d",
-    baseContour2: "#797979",
-    baseContour3: "#a6a6a6",
-    accent: "#fcbd40",
-    accentLight: "#fcb24b"
-  },
-  snapToUserLocation: false,
+    legend: true, // if true, you must have at least one custom icon set
+    icons: {
+      revelry: {
+        name: "Revelry",
+        image: './app/RevMarker.png',
+      }
+    },
+    initialCenter: {
+      lat: 29.975588,
+      lng: -90.102682
+    },
+    initialZoom: 11,
+    markers: [
+      {
+        position: {
+          lat: 29.975588,
+          lng: -90.102682
+        },
+        icon: 'revelry',
+        message: [
+          "<h3>Revelry Labs</h3>",
+          "<p>4200 Canal St, Suite E</p>",
+          "<p>New Orleans, LA 70119</p>"].join(""),
+      },
+    ],
+    snapToUserLocation: false,
+  }
 }
 
 <GMap config={settings} />
