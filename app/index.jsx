@@ -53,32 +53,35 @@ class App extends React.Component {
 
   get multipleMarkersSettings() {
     let settings = this.basicSettings;
+    settings.initialZoom = 14;
     settings.markers = [
       {
         position: {
           lat: 29.975588,
           lng: -90.102682
-        }
+        },
+        message: "One."
       },
       {
         position: {
-          lat: 29.988588,
-          lng: -90.112682
-        }
+          lat: 29.975588,
+          lng: -90.106999
+        },
+        message: "Two."
       },
       {
         position: {
-          lat: 29.955588,
-          lng: -90.092682
-        }
+          lat: 29.977999,
+          lng: -90.106999
+        },
+        message: "Three."
       }
     ]
     return settings;
   }
 
   get mapWithLegendSettings() {
-    let settings = this.basicSettings;
-    settings.initialZoom = 14;
+    let settings = this.multipleMarkersSettings;
     settings.icons = {
       sunglasses: {
         name: "Sunglasses",
@@ -93,29 +96,9 @@ class App extends React.Component {
         image: "./app/images/three.png"
       }
     }
-    settings.markers = [
-      {
-        position: {
-          lat: 29.975588,
-          lng: -90.102682
-        },
-        icon: 'sunglasses'
-      },
-      {
-        position: {
-          lat: 29.975588,
-          lng: -90.106999
-        },
-        icon: 'burger'
-      },
-      {
-        position: {
-          lat: 29.977999,
-          lng: -90.106999
-        },
-        icon: 'smile'
-      }
-    ]
+    settings.markers[0].icon = 'sunglasses';
+    settings.markers[1].icon = 'burger';
+    settings.markers[2].icon = 'smile';
     settings.legend = true;
     return settings;
   }
@@ -137,7 +120,7 @@ class App extends React.Component {
           <GMap config={this.brandedWithMarkerSettings} />
         </div>
         <div className="mapContainer">
-          <h4>Multiple Markers</h4>
+          <h4>Multiple Markers and Info Windows</h4>
           <GMap config={this.multipleMarkersSettings} />
         </div>
         <div className="mapContainer">
