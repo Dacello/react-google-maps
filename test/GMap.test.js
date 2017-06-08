@@ -45,7 +45,12 @@ describe('Gmap', () => {
   });
 
   it('should render multiple markers with custom icons', () => {
-    settings.icons = { revelry: './app/RevMarker.png' };
+    settings.icons = {
+        revelry: {
+        name: "Revelry",
+        image:'./app/RevMarker.png'
+      }
+    };
     settings.markers.push({
       position: {
         lat: 29.995594,
