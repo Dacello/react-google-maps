@@ -15,8 +15,13 @@ class App extends React.Component {
         accent: "#fcbd40",
         accentLight: "#fcb24b"
       },
+      // if true, you must have at least one custom icon set
+      legend: true,
       icons: {
-        revelry: './app/RevMarker.png',
+        revelry: {
+          name: "Revelry",
+          image: './app/RevMarker.png',
+        }
       },
       initialCenter: {
         lat: 29.975588,
