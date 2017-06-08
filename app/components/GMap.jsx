@@ -94,10 +94,16 @@ export default class GMap extends React.Component {
 
   createMarkers(markers) {
     markers.forEach( (marker) => {
-      let thisMarker = this.newMarker(marker.position, this.props.config.icons[marker.icon].image);
+      if (this.props.config.icons) {
+        var thisMarker = this.newMarker(marker.position, this.props.config.icons[marker.icon].image);
+      } else {
+        var thisMarker = this.newMarker(marker.position);
+      }
       // have to define google maps event listeners here too
       // because we can't add listeners on the map until it's created
-      google.maps.event.addListener(thisMarker, 'click', () => this.newInfoWindow(thisMarker, marker.message));
+      if (marker.message){
+        google.maps.event.addListener(thisMarker, 'click', () => this.newInfoWindow(thisMarker, marker.message));
+      }
     })
   }
 
