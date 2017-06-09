@@ -42,21 +42,22 @@ export default class GMap extends React.Component {
   }
 
   loadMap() {
+    const {config} = this.props;
     if (this.state.scriptLoaded) {
-      if (this.props.config && this.props.config.snapToUserLocation && navigator.geolocation) {
+      if (config && config.snapToUserLocation && navigator.geolocation) {
         this.getUserLocation()
       } else {
         this.setState({
-          center: this.mapCenter(this.props.config.initialCenter.lat, this.props.config.initialCenter.lng)
+          center: this.mapCenter(config.initialCenter.lat, config.initialCenter.lng)
         })
       }
       // create the map and markers after the component has
       // been rendered because we need to manipulate the DOM for Google =(
-      this.map = this.createMap(this.props.config.initialCenter);
-      if (this.props.config && this.props.config.markers) {
-        this.markers = this.createMarkers(this.props.config.markers);
-        if (this.props.config.legend) {
-          this.createLegend(this.props.config.icons);
+      this.map = this.createMap(config.initialCenter);
+      if (config && config.markers) {
+        this.markers = this.createMarkers(config.markers);
+        if (config.legend) {
+          this.createLegend(config.icons);
         }
       }
     }
@@ -68,12 +69,10 @@ export default class GMap extends React.Component {
   }
 
   createLegend(icons) {
-    let legend = this.refs.legend;
-    for (let key in icons) {
-      let type = icons[key];
-      let name = type.name;
-      let icon = type.image;
-      var div = document.createElement('div');
+    const {legend} = this.refs;
+    for (const key in icons) {
+      const type = icons[key], name = type.name, icon = type.image;
+      const div = document.createElement('div');
       div.innerHTML = `<img src="${icon}"> ${name}`;
       legend.appendChild(div);
     }
@@ -81,24 +80,25 @@ export default class GMap extends React.Component {
   }
 
   createMap(center) {
-    let mapOptions = {
+    const {config} = this.props;
+    const mapOptions = {
       zoom: this.props.config.initialZoom,
       center: center,
     }
-    if (this.props.config && this.props.config.colors) {
-      mapOptions.styles = MapStyles(this.props.config.colors)
+    if (config && config.colors) {
+      mapOptions.styles = MapStyles(config.colors)
       mapOptions.mapTypeId = 'terrain'
     }
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
   }
 
   createMarkers(markers) {
+
     markers.forEach( (marker) => {
-      if (this.props.config.icons) {
-        var thisMarker = this.newMarker(marker.position, this.props.config.icons[marker.icon].image);
-      } else {
-        var thisMarker = this.newMarker(marker.position);
-      }
+      const {config} = this.props,
+      icon = config.icons && config.icons[marker.icon].image,
+      thisMarker = this.newMarker(marker.position, icon);
+      
       // have to define google maps event listeners here too
       // because we can't add listeners on the map until it's created
       if (marker.message){
