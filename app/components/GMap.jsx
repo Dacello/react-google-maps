@@ -1,79 +1,118 @@
 import React from 'react';
 import MapStyles from './MapStyles';
 import Script from 'react-load-script';
+import PropTypes from 'prop-types';
 
 export default class GMap extends React.Component {
   static get propTypes() {
     return {
-      center: React.PropTypes.objectOf(React.PropTypes.number).isRequired,
-      colors: React.PropTypes.objectOf(React.PropTypes.string),
-      message: React.PropTypes.string.isRequired,
-      findUserLocation: React.PropTypes.bool,
-      markerImage: React.PropTypes.string,
+      config: PropTypes.shape({
+        colors: PropTypes.objectOf(PropTypes.string),
+        icons: PropTypes.objectOf(PropTypes.objectOf(PropTypes.string)),
+        initialCenter: PropTypes.objectOf(PropTypes.number),
+        initialZoom: PropTypes.number,
+        legend: PropTypes.bool,
+        markers: PropTypes.arrayOf(PropTypes.shape({
+          position: PropTypes.objectOf(PropTypes.number),
+          icon: PropTypes.string,
+          message: PropTypes.string
+        })),
+        snapToUserLocation: PropTypes.bool
+      })
     }
   }
 
   static get defaultProps() {
     return {
-        center: {
+      config: {
+        initialCenter: {
           lat: 29.975588,
-          lng: -90.102682 },
-        message: "A Message"
+          lng: -90.102682
+        },
+        initialZoom: 10
+      }
     }
   }
 
   constructor(props){
     super(props);
     this.state = {
-      zoom: 11,
-      infoWindowIsOpen: true
+      center: null
     };
   }
 
   loadMap() {
+    const {config} = this.props;
     if (this.state.scriptLoaded) {
-      // lets map autocenter on user's location (if the user enables it)
-      // which takes a while, so the map is created and goes to the initial center first
-      if (this.props.findUserLocation && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition( (position) => {
-          this.setState({
-            center: this.mapCenter(position.coords.latitude, position.coords.longitude)
-          });
-          this.moveMap("Got it!");
-        }, () => this.infoWindow.setContent("Couldn't find your location :("))
+      if (config && config.snapToUserLocation && navigator.geolocation) {
+        this.getUserLocation()
       } else {
         this.setState({
-          center: this.mapCenter(this.props.center.lat, this.props.center.lng)
+          center: this.mapCenter(config.initialCenter.lat, config.initialCenter.lng)
         })
       }
-      // create the map, marker and infoWindow after the component has
+      // create the map and markers after the component has
       // been rendered because we need to manipulate the DOM for Google =(
-      this.map = this.createMap(this.state.center);
-      this.marker = this.newMarker(this.state.center, this.map, this.props.markerImage);
-      this.infoWindow = this.newInfoWindow(this.map, this.marker, this.props.message);
-
-      // have to define google maps event listeners here too
-      // because we can't add listeners on the map until its created
-      google.maps.event.addListener(this.map, 'zoom_changed', () => this.handleZoomChange());
-      google.maps.event.addListener(this.marker, 'click', () => this.toggleInfoWindow())
+      this.map = this.createMap(config.initialCenter);
+      if (config && config.markers) {
+        this.markers = this.createMarkers(config.markers);
+        if (config.legend) {
+          this.createLegend(config.icons);
+        }
+      }
     }
   }
 
   // clean up event listeners when component unmounts
   componentDidUnMount() {
-    google.maps.event.clearListeners(map, 'zoom_changed')
+    google.maps.event.clearListeners(map, 'click')
+  }
+
+  createLegend(icons) {
+    const {legend} = this.refs;
+    for (const key in icons) {
+      const type = icons[key], name = type.name, icon = type.image;
+      const div = document.createElement('div');
+      div.innerHTML = `<img src="${icon}"> ${name}`;
+      legend.appendChild(div);
+    }
+    this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
   }
 
   createMap(center) {
-    let mapOptions = {
-      zoom: this.state.zoom,
+    const {config} = this.props;
+    const mapOptions = {
+      zoom: this.props.config.initialZoom,
       center: center,
-      mapTypeId: 'terrain'
     }
-    if (this.props.colors) {
-      mapOptions.styles = MapStyles(this.props.colors)
+    if (config && config.colors) {
+      mapOptions.styles = MapStyles(config.colors)
+      mapOptions.mapTypeId = 'terrain'
     }
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
+  }
+
+  createMarkers(markers) {
+
+    markers.forEach( (marker) => {
+      const {config} = this.props,
+      icon = config.icons && config.icons[marker.icon].image,
+      thisMarker = this.newMarker(marker.position, icon);
+      
+      // have to define google maps event listeners here too
+      // because we can't add listeners on the map until it's created
+      if (marker.message){
+        google.maps.event.addListener(thisMarker, 'click', () => this.newInfoWindow(thisMarker, marker.message));
+      }
+    })
+  }
+
+  getUserLocation() {
+    // lets map autocenter on user's location (if the user enables it)
+    // which takes a while, so the map should get rendered with the initial center first
+      navigator.geolocation.getCurrentPosition( (position) => {
+        this.moveMap(position.coords.latitude, position.coords.longitude, "You are here.");
+      }, () => alert("Couldn't find your location"))
   }
 
   handleScriptCreate() {
@@ -95,68 +134,50 @@ export default class GMap extends React.Component {
     this.loadMap();
   }
 
-  handleZoomChange() {
-    this.setState({
-      zoom: this.map.getZoom()
-    })
-  }
-
-  newInfoWindow(map, anchor, content) {
+  newInfoWindow(anchor, content) {
     return new google.maps.InfoWindow({
-      map: map,
+      map: this.map,
       anchor: anchor,
       content: content
     })
   }
 
-  newMarker(position, map, image) {
+  newMarker(position, image) {
     return new google.maps.Marker({
       position: position,
-      map: map,
+      map: this.map,
       draggable: true,
       animation: google.maps.Animation.DROP,
       icon: image
     })
   }
 
-  toggleInfoWindow() {
-    if (this.state.infoWindowIsOpen) {
-      this.infoWindow.close()
-      this.setState({
-        infoWindowIsOpen: false
-      })
-    } else {
-      this.infoWindow = this.newInfoWindow(this.map, this.marker, this.props.message);
-      this.setState({
-        infoWindowIsOpen: true
-      })
-    }
-  }
-
   mapCenter(lat, lng) {
     return new google.maps.LatLng(lat,lng)
   }
 
-  moveMap(message) {
+  moveMap(lat, lng, message) {
+    this.setState({
+      center: this.mapCenter(lat, lng)
+    });
     this.map.panTo(this.state.center);
-    this.marker.setPosition(this.state.center);
-    this.infoWindow.setContent(message)
+    let thisMarker = this.newMarker(this.state.center);
+    this.newInfoWindow(thisMarker, message);
   }
 
   render() {
     let url = "http://maps.googleapis.com/maps/api/js?key=" + process.env.GOOGLE_API_KEY
-    return <div className="GMap">
-      <Script
-        url={url}
-        onCreate={this.handleScriptCreate.bind(this)}
-        onError={this.handleScriptError.bind(this)}
-        onLoad={this.handleScriptLoad.bind(this)}
-      />
-      <div className='UpdatedText' id="zoom">
-        <p>Current Zoom: { this.state.zoom }</p>
+    return (
+      <div className="GMap">
+        <Script
+          url={url}
+          onCreate={this.handleScriptCreate.bind(this)}
+          onError={this.handleScriptError.bind(this)}
+          onLoad={this.handleScriptLoad.bind(this)}
+        />
+        <div className='GMap-canvas' ref="mapCanvas"></div>
+        {this.props.config.legend && <div ref="legend" className="legend"><h3>Legend</h3></div>}
       </div>
-      <div className='GMap-canvas' ref="mapCanvas">
-      </div>
-    </div>
+    )
   }
 }
