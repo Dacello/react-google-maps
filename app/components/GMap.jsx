@@ -45,7 +45,7 @@ export default class GMap extends React.Component {
     const {config} = this.props;
     if (this.state.scriptLoaded) {
       if (config && config.snapToUserLocation && navigator.geolocation) {
-        this.getUserLocation()
+        this.getUserLocation();
       } else {
         this.setState({
           center: this.mapCenter(config.initialCenter.lat, config.initialCenter.lng)
@@ -66,7 +66,7 @@ export default class GMap extends React.Component {
 
   // clean up event listeners when component unmounts
   componentDidUnMount() {
-    google.maps.event.clearListeners(map, 'click')
+    google.maps.event.clearListeners(map, 'click');
   }
 
   createLegend(icons) {
@@ -87,8 +87,8 @@ export default class GMap extends React.Component {
       center: center,
     }
     if (config && config.colors) {
-      mapOptions.styles = MapStyles(config.colors)
-      mapOptions.mapTypeId = 'terrain'
+      mapOptions.styles = MapStyles(config.colors);
+      mapOptions.mapTypeId = 'terrain';
     }
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
   }
@@ -103,7 +103,7 @@ export default class GMap extends React.Component {
       // have to define google maps event listeners here too
       // because we can't add listeners on the map until it's created
       if (marker.message){
-        thisMarker.infoWindowIsOpen = false
+        thisMarker.infoWindowIsOpen = false;
         google.maps.event.addListener(thisMarker, 'click', () => this.handleMarkerClick(thisMarker, marker.message));
       }
       return thisMarker;
@@ -155,7 +155,7 @@ export default class GMap extends React.Component {
       content: content
     })
     google.maps.event.addListenerOnce(anchor.infoWindow, 'closeclick', () => anchor.infoWindowIsOpen = false);
-    return anchor.infoWindow
+    return anchor.infoWindow;
   }
 
   newMarker(position, image) {
@@ -169,7 +169,7 @@ export default class GMap extends React.Component {
   }
 
   mapCenter(lat, lng) {
-    return new google.maps.LatLng(lat,lng)
+    return new google.maps.LatLng(lat,lng);
   }
 
   moveMap(lat, lng, message) {
