@@ -3,3 +3,4 @@ public/bundle.js
 npm-debug.log
 .eslintrc
 .env
+.DS_Store

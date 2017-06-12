@@ -45,7 +45,7 @@ export default class GMap extends React.Component {
     const {config} = this.props;
     if (this.state.scriptLoaded) {
       if (config && config.snapToUserLocation && navigator.geolocation) {
-        this.getUserLocation()
+        this.getUserLocation();
       } else {
         this.setState({
           center: this.mapCenter(config.initialCenter.lat, config.initialCenter.lng)
@@ -65,7 +65,7 @@ export default class GMap extends React.Component {
 
   // clean up event listeners when component unmounts
   componentDidUnMount() {
-    google.maps.event.clearListeners(map, 'click')
+    google.maps.event.clearListeners(map, 'click');
   }
 
   createLegend(icons) {
@@ -86,25 +86,28 @@ export default class GMap extends React.Component {
       center: center,
     }
     if (config && config.colors) {
-      mapOptions.styles = MapStyles(config.colors)
-      mapOptions.mapTypeId = 'terrain'
+      mapOptions.styles = MapStyles(config.colors);
+      mapOptions.mapTypeId = 'terrain';
     }
     return new google.maps.Map(this.refs.mapCanvas, mapOptions)
   }
 
   createMarkers(markers) {
 
-    markers.forEach( (marker) => {
+    const markersArray = markers.map( (marker) => {
       const {config} = this.props,
       icon = config.icons && config.icons[marker.icon].image,
       thisMarker = this.newMarker(marker.position, icon);
-      
+
       // have to define google maps event listeners here too
       // because we can't add listeners on the map until it's created
       if (marker.message){
-        google.maps.event.addListener(thisMarker, 'click', () => this.newInfoWindow(thisMarker, marker.message));
+        thisMarker.infoWindowIsOpen = false;
+        google.maps.event.addListener(thisMarker, 'click', () => this.handleMarkerClick(thisMarker, marker.message));
       }
+      return thisMarker;
     })
+    return markersArray;
   }
 
   getUserLocation() {
@@ -113,6 +116,16 @@ export default class GMap extends React.Component {
       navigator.geolocation.getCurrentPosition( (position) => {
         this.moveMap(position.coords.latitude, position.coords.longitude, "You are here.");
       }, () => alert("Couldn't find your location"))
+  }
+
+  handleMarkerClick(marker, message) {
+    if (!marker.infoWindowIsOpen) {
+      marker.infoWindowIsOpen = true;
+      this.newInfoWindow(marker, message);
+    } else {
+      marker.infoWindowIsOpen = false;
+      marker.infoWindow.close();
+    }
   }
 
   handleScriptCreate() {
@@ -135,11 +148,13 @@ export default class GMap extends React.Component {
   }
 
   newInfoWindow(anchor, content) {
-    return new google.maps.InfoWindow({
+    anchor.infoWindow = new google.maps.InfoWindow({
       map: this.map,
       anchor: anchor,
       content: content
     })
+    google.maps.event.addListenerOnce(anchor.infoWindow, 'closeclick', () => anchor.infoWindowIsOpen = false);
+    return anchor.infoWindow;
   }
 
   newMarker(position, image) {
@@ -153,7 +168,7 @@ export default class GMap extends React.Component {
   }
 
   mapCenter(lat, lng) {
-    return new google.maps.LatLng(lat,lng)
+    return new google.maps.LatLng(lat,lng);
   }
 
   moveMap(lat, lng, message) {
