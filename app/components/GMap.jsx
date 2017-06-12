@@ -56,6 +56,7 @@ export default class GMap extends React.Component {
       this.map = this.createMap(config.initialCenter);
       if (config && config.markers) {
         this.markers = this.createMarkers(config.markers);
+        // debugger;
         if (config.legend) {
           this.createLegend(config.icons);
         }
@@ -94,17 +95,20 @@ export default class GMap extends React.Component {
 
   createMarkers(markers) {
 
-    markers.forEach( (marker) => {
+    const markersArray = markers.map( (marker) => {
       const {config} = this.props,
       icon = config.icons && config.icons[marker.icon].image,
       thisMarker = this.newMarker(marker.position, icon);
-      
+
       // have to define google maps event listeners here too
       // because we can't add listeners on the map until it's created
       if (marker.message){
-        google.maps.event.addListener(thisMarker, 'click', () => this.newInfoWindow(thisMarker, marker.message));
+        thisMarker.infoWindowIsOpen = false
+        google.maps.event.addListener(thisMarker, 'click', () => this.handleMarkerClick(thisMarker, marker.message));
       }
+      return thisMarker;
     })
+    return markersArray;
   }
 
   getUserLocation() {
@@ -113,6 +117,16 @@ export default class GMap extends React.Component {
       navigator.geolocation.getCurrentPosition( (position) => {
         this.moveMap(position.coords.latitude, position.coords.longitude, "You are here.");
       }, () => alert("Couldn't find your location"))
+  }
+
+  handleMarkerClick(marker, message) {
+    if (!marker.infoWindowIsOpen) {
+      marker.infoWindowIsOpen = true;
+      this.newInfoWindow(marker, message);
+    } else {
+      marker.infoWindowIsOpen = false;
+      marker.infoWindow.close();
+    }
   }
 
   handleScriptCreate() {
@@ -135,11 +149,13 @@ export default class GMap extends React.Component {
   }
 
   newInfoWindow(anchor, content) {
-    return new google.maps.InfoWindow({
+    anchor.infoWindow = new google.maps.InfoWindow({
       map: this.map,
       anchor: anchor,
       content: content
     })
+    google.maps.event.addListenerOnce(anchor.infoWindow, 'closeclick', () => anchor.infoWindowIsOpen = false);
+    return anchor.infoWindow
   }
 
   newMarker(position, image) {
