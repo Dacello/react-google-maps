@@ -56,7 +56,6 @@ export default class GMap extends React.Component {
       this.map = this.createMap(config.initialCenter);
       if (config && config.markers) {
         this.markers = this.createMarkers(config.markers);
-        // debugger;
         if (config.legend) {
           this.createLegend(config.icons);
         }
